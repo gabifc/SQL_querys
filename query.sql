@@ -129,3 +129,58 @@ ORDER BY HireDate asc
 SELECT *
 FROM Person.Person
 WHERE BusinessEntityID IN (2,7,13)
+
+-- sem o IN
+SELECT *
+FROM Person.Person
+WHERE BusinessEntityID = 2
+OR BusinessEntityID = 7
+OR BusinessEntityID = 13
+
+-- NOT IN - retorna tudo que não estiver dentro desta condição
+SELECT *
+FROM Person.Person
+WHERE BusinessEntityID NOT IN (2,7,13)
+
+-- LIKE - encontra valores parecidos. EX: para encontrar um nome que tem "ovi"
+-- a posição do % indica o local onde ele deve buscar, neste caso ele considerará qualquer valor que está depois do ovi.
+-- sendo assim, indico que deve obrigatoriamente iniciar com ovi
+-- posso utilizar %ovi% para ele considerar antes e depois %ovi quando sei que ovi está no final
+-- Com underline: %ro_ no lugar do _ ele substitui por um valor, somente no local do underline, 1 letra no caso
+-- independe ser maiusculo ou minusculo
+SELECT *
+FROM Person.Person
+WHERE FirstName LIKE 'ovi%'
+
+-- Exercicios
+
+-- quantos produtos cadastrados no sistema custam mais de 1500?
+-- resposta 39
+SELECT COUNT(ListPrice) -- pode ser * ou nome da coluna
+FROM Production.Product
+WHERE ListPrice > 1500
+
+-- quantas pessoas temos com o sobrenome que inicia com a letra p
+-- 1187
+SELECT COUNT(LastName)
+FROM Person.Person
+WHERE LastName LIKE 'P%'
+
+-- em quantas cidades unicas estão cadastrados os nossos clientes
+--19614
+SELECT DISTINCT COUNT(City)
+FROM Person.Address
+
+-- quais são as cidades unicas cadastradas
+Select DISTINCT(City)
+FROM Person.Address
+
+-- quantos produtos vermelhos tem preco entre 500 a 1000 dolares
+SELECT COUNT(*)
+FROM Production.Product
+WHERE Color = 'red' AND ListPrice BETWEEN 500 AND 1000
+
+-- quantos produtos cadastrados tem a palavra 'road' no nome
+SELECT COUNT(Name) -- tbm pode ser *
+FROM Production.Product
+WHERE Name LIKE '%road%'
