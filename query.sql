@@ -184,3 +184,96 @@ WHERE Color = 'red' AND ListPrice BETWEEN 500 AND 1000
 SELECT COUNT(Name) -- tbm pode ser *
 FROM Production.Product
 WHERE Name LIKE '%road%'
+
+
+-- MIN MAX SUM AVG
+-- funções de agregação basicamente agregam ou combinam dados de uma tabela em 1 só resultado
+
+-- AS define um apelido para a tabela, sem o as o resultado exibe Nenhum nome de coluna com o AS exibe 'Soma' como declarado
+
+-- SUM: dentro do () a coluna que será somada
+SELECT SUM(linetotal) AS 'Soma'
+FROM Sales.SalesOrderDetail
+
+-- MIN: qual o menor valor que tenho na tabela Sales
+SELECT MIN(linetotal) AS 'MenorValor'
+FROM Sales.SalesOrderDetail
+
+-- MAX: qual valor maximo cadastrado na tabela sales
+SELECT MAX(linetotal) AS 'MaiorValor'
+FROM Sales.SalesOrderDetail
+
+-- AVG: qual a media de valores da tabela sales
+SELECT AVG(linetotal) AS 'ValorMedio'
+FROM Sales.SalesOrderDetail
+
+
+-- GROUP BY 
+-- divide o resultado da pesquisa em grupos. 
+--Para cada grupo posso aplicar uma função de agregação. sintaxe:
+SELECT coluna1, funcaoAgregacao(coluna2)
+FROM nomeTabela
+GROUP BY coluna1
+
+-- na tab Sales quero agrupar a coluna SpecialOfferID com UnitPrice somada, o total 
+-- aqui ele seleciona todos as linhas com o mesmo id e soma a coluna unitPrice. Todos os ids 9 somam X valor
+-- apresenta o resultado separado por id e a soma total
+SELECT SpecialOfferID, SUM(UnitPrice) AS 'SOMA'
+FROM Sales.SalesOrderDetail
+GROUP BY SpecialOfferID
+
+-- para identificar as linhas que ele agrupou e somou
+-- retorna 61 linhas que na query de cima foram somadas e agrupadas
+SELECT SpecialOfferID, UnitPrice
+FROM Sales.SalesOrderDetail
+WHERE SpecialOfferID = 9
+
+-- quero saber quantidade(COUNT) vendida de cada produto até hoje
+-- aqui conto quantas vezes cada id aparece na tabela de vendas
+SELECT ProductID, COUNT(ProductID) AS 'QuantidadeDeVendas'
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+
+-- soma total de todos os produtos por ID
+SELECT ProductID, SUM(LineTotal) AS 'VendaTotal'
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+
+-- quantos nomes de cada nome temos cadastrado no BD
+SELECT FirstName, COUNT(FirstName) AS 'TotalNome'
+FROM Person.Person
+GROUP BY FirstName
+
+-- na tabela production quero saber a média de preço para os produtos que são prata(silver)
+Select *
+FROM Production.Product
+
+SELECT Color, AVG(ListPrice) AS 'MediaPreço'
+FROM Production.Product
+WHERE Color = 'silver' -- removendo a condição WHERE, lista todas as cores
+GROUP BY Color
+
+-- quantas pessoas tem o mesmo middleName?
+SELECT MiddleName, COUNT(MiddleName) AS 'TotalNomesDoMeioIguais'
+FROM Person.Person
+GROUP BY MiddleName
+
+-- em média qual é a quantidade que cada produto é vendade na loja
+SELECT ProductID, AVG(OrderQty) AS 'MediaVendas'
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+
+-- Quais foram as 10 vendas que no total(SUM) tiveram maiores valor de venda por produto do maior valor para o menor
+SELECT TOP 10 ProductID, SUM(LineTotal) AS 'MaiorValorVenda'
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID 
+ORDER BY SUM(LineTotal) DESC
+
+-- quantos produtos (COUNT) e qual a quantidade media (AVG) de produtos temos cadastrados nas nossas ordens de serviços (WorkOrder)
+-- agrupados por productID
+SELECT ProductID, 
+	COUNT(ProductID) AS 'ContagemProdutos',
+	AVG(WorkOrderID) AS 'MediaProdutos'
+FROM Production.WorkOrder
+GROUP BY ProductID
+
