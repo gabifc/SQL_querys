@@ -277,3 +277,96 @@ SELECT ProductID,
 FROM Production.WorkOrder
 GROUP BY ProductID
 
+-- HAVING
+-- junção com o GROUP BY para filtrar resultados de um agrupamento. Um tipo de Where (condição) para dados agrupados.
+--sintaxe
+SELECT coluna1, FuncaoAgregacao(coluna2)
+FROM nomeTabela
+GROUP BY coluna1
+HAVING  condicao -- aplicada aos dados agrupados na linha acima com o GROUP BY
+
+-- quero saber quais nomes no sistema tem ocorrência maior que 10 vezes
+SELECT FirstName, COUNT(FirstName) AS 'NumOcorrencia'
+FROM Person.Person
+GROUP BY FirstName
+HAVING COUNT(FirstName) > 10
+ORDER BY NumOcorrencia ASC 
+
+-- quais produtos estão entre 162k e 500k no total de vendas
+SELECT ProductID, SUM(LineTotal) AS 'Total'
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+HAVING SUM(LineTotal) between 162000 and 500000
+
+-- usando HAVING E WHERE juntos
+-- quero saber quais nomes no sistema tem ocorrência maior que 10 vezes onde o título é 'Mr'
+SELECT FirstName, COUNT(FirstName) AS 'NumOcorrencia'
+FROM Person.Person
+WHERE Title = 'Mr.'
+GROUP BY FirstName
+HAVING COUNT(FirstName) > 10
+
+-- Identifique as provincias (StateProvinceId) com o maior numero de cadastros no nosso sistema. Encontre quais provincias estão 
+-- registradas mais que 1000 vezes
+SELECT StateProvinceID, COUNT(StateProvinceID) AS 'TotalProvincias'
+FROM Person.Address
+GROUP BY StateProvinceID
+HAVING COUNT(StateProvinceID) > 1000
+
+-- Quais produtos (productID) não estão trazendo em média no mínimo 1 milhão em total de vendas (lineTotal)
+SELECT ProductID, AVG(LineTotal) AS 'MediaVendas'
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+HAVING AVG(LineTotal) > 1.000000
+
+-- AS 
+-- Renomear as colunas, dar um apelido.
+-- quando uso apenas uma palavra não precisa de AS, ex. Preco.
+-- Para duas ou mais palavras precisa de '', ex. 'Preco do Produto'
+SELECT FirstName AS Nome, LastName AS Sobrenome
+FROM Person.Person
+
+SELECT ProductNumber AS 'Numero do Produto'
+FROM Production.Product
+
+SELECT UnitPrice AS 'Preço Unitário'
+FROM Sales.SalesOrderDetail
+
+-- INNER JOIN
+
+--juntando todos os dados de duas tabelas
+SELECT *
+FROM Person.BusinessEntityAddress AS BA
+INNER JOIN Person.Address AS PA
+ON PA.AddressID = BA.AddressID
+
+-- juntando colunas: BusinessEntityID, FirstName, LastName, EmailAddress
+SELECT p.BusinessEntityID, p.FirstName, p.LastName, pe.EmailAddress
+FROM Person.Person AS P
+INNER JOIN Person.EmailAddress AS PE ON p.BusinessEntityID = pe.BusinessEntityID
+
+-- juntando colunas: ListPrice, Nome do Produto, Nome da Subcaterogia
+SELECT * 
+FROM Production.Product
+
+SELECT * 
+FROM Production.ProductSubcategory
+-- coluna comum PRoductSubcategoryID
+
+SELECT pr.Name AS 'Nome Produto', pc.Name AS 'Nome Categoria', pr.ListPrice
+FROM Production.Product AS pr
+INNER JOIN Production.ProductSubcategory AS pc 
+ON pr.ProductSubcategoryID = pc.ProductSubcategoryID 
+
+-- juntar PhoneNumberTye com PersonPhone: BusinessEntityID, Name, PhoneNumberTypeId, PhoneNumber
+SELECT pp.BusinessEntityID, pt.Name, pp.PhoneNumberTypeId, pp.PhoneNumber
+FROM Person.PhoneNumberType AS PT
+INNER JOIN Person.PersonPhone AS PP
+ON PT.PhoneNumberTypeID = PP.PhoneNumberTypeID
+
+-- juntar person.stateprovince e person.adress: AdressId, City, StateProviceId, Name
+SELECT pa.AddressID, pa.City, ps.StateProvinceID, ps.Name
+FROM Person.StateProvince AS PS
+INNER JOIN Person.Address AS PA
+ON PS.StateProvinceID = PA.StateProvinceID
+
