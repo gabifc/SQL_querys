@@ -426,3 +426,89 @@ UNION -- Unindo os 2 selects retorna 936 linhas
 SELECT FirstName, MiddleName, Title -- este select sozinho retorna 1319 linhas
 FROM Person.Person
 WHERE MiddleName = 'A'
+
+-- DATEPART - extrair dados com tipo de informação data
+-- DATAPART(1º param é a data: mes, ano, dia, semestre e o 2ºparam é a coluna que tem a data pedida)
+SELECT SalesOrderId, DATEPART(YEAR, OrderDate) AS Ano
+FROM Sales.SalesOrderHeader
+
+SELECT SalesOrderId, DATEPART(MONTH, OrderDate) AS Mês
+FROM Sales.SalesOrderHeader
+
+-- qual a média de valor devido por mês - TotalDue
+SELECT AVG(TotalDue) AS 'Média Devida', DATEPART(MONTH, OrderDate) AS Mes
+FROM Sales.SalesOrderHeader
+GROUP BY DATEPART(MONTH, OrderDate)
+ORDER BY Mes
+
+
+--------------------------------------- STRING 
+-- CONCAT 
+-- uso o argumento CONCAT(aqui coloco os parametros, pode ser ilimitado)
+-- inserir espaço entre os parametros
+SELECT CONCAT(FirstName,' ', LastName) AS 'Nome completo'
+FROM Person.Person
+
+-- UPPER
+--vletras em maiúscula e LOWER letras em minúscula
+-- normalizar o dado string
+SELECT UPPER(FirstName), LOWER(LastName)
+FROM Person.Person
+
+-- LEN 
+-- Length contagem de caracteres da string
+SELECT FirstName, LEN(FirstName) AS 'Quantidade de Letras'
+FROM Person.Person
+
+-- SUBSTRING 
+-- extrair um trecho de uma string
+-- 1º param é a coluna que quero (FirstName), 2º parametro é a posição do índice que ele inicia a coleta (1) que é a primeira letra
+-- 3º parametro é a quantidade de caracteres (3) quero 3 letras.
+SELECT FirstName, SUBSTRING(FirstName, 1, 3) -- quero as 3 primeiras letras do primeiro nome
+FROM Person.Person
+
+-- REPLACE
+-- substituir dados na tabela
+-- pode trabalhar com vários parametros
+-- 1º param é a coluna, 2º o que ele busca para substituir(no 1º param) e 3º o que deve ser colocado no lugar
+SELECT ProductNumber, REPLACE(ProductNumber, '-', '#') -- na coluna productnumber troca - por #
+FROM Production.Product
+
+
+----------------------- Operações Matemáticas
+-- soma de 2 ou mais colunas
+SELECT UnitPrice + LineTotal
+FROM Sales.SalesOrderDetail
+-- demais operações trocar o sinal de +
+
+-- SUM - soma de uma coluna
+SELECT SUM(LineTotal) 
+FROM Sales.SalesOrderDetail
+
+-- AVG - média
+SELECT AVG(LineTotal) 
+FROM Sales.SalesOrderDetail
+
+--valor min da coluna
+SELECT MIN(LineTotal) 
+FROM Sales.SalesOrderDetail
+
+--valor máximo da coluna
+SELECT MAX(LineTotal) 
+FROM Sales.SalesOrderDetail
+
+-- ROUND
+-- arredondamento de valor
+--1º parametro de onde vem a info, qual coluna. 2º param a precisão decimal do arredondamento
+SELECT LineTotal, ROUND(LineTotal,1)
+FROM Sales.SalesOrderDetail
+-- passa de 2024.994000 para 2525.000000
+-- também posso arredondar para baixo utilizando -1
+
+-- SQRT
+-- raiz quadrada
+SELECT SQRT(LineTotal)
+FROM Sales.SalesOrderDetail
+
+---------------------- SUBQUERY
+-- subselect
