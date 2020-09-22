@@ -6,7 +6,8 @@ FROM person.Person
 SELECT DISTINCT LastName
 FROM person.Person
 
---where - selecionar o nome e sobrenome especifico
+-------------------- WHERE 
+-- selecionar o nome e sobrenome especifico
 SELECT *
 FROM person.Person
 WHERE LastName = 'miller' and FirstName = 'victoria'
@@ -37,12 +38,6 @@ FROM HumanResources.Employee
 WHERE MaritalStatus = 'm' AND SalariedFlag = 1
 
 -- consiga o email do usuario PETER KREBS  
---tentativa de join - REFAZER
-SELECT EmailAddress, FirstName, LastName
-FROM Person.EmailAddress
-JOIN Person.Person ON Person.BusinessEntityID = 26 AND Person.FirstName = 'peter' AND Person.LastName = 'krebs'
---WHERE FirstName = 'peter' AND LastName = 'krebs'
-
 --resposta- primeiro consido o BusinessEntityID 
 SELECT *
 FROM Person.Person
@@ -52,7 +47,8 @@ SELECT EmailAddress
 FROM Person.EmailAddress
 WHERE BusinessEntityID = 26
 
---count - retorna o nr de linhas que atende a condição
+----------------------------------- COUNT 
+-- retorna o nr de linhas que atende a condição
 SELECT COUNT(*) -- para pegar tudo, inclusive valores nulos e repetidos
 -- posso incluir o DISTINCT para não incluir os valores nulos e repetidos
 SELECT COUNT(DISTINTC nomedacoluna)
@@ -73,13 +69,15 @@ FROM Production.Product
 SELECT COUNT(size)
 FROM Production.Product
 
---TOP - limita a quantidade exibida no resultado. 
+-----------------------TOP 
+-- limita a quantidade exibida no resultado. 
 --Ex. Quero só as 10 primeiras linhas da tabela produção coluna produto
 SELECT TOP 10 *
 FROM Production.Product
 
 
--- ORDER BY - ordena os resultados por alguma coluna em ordem crescente ou decrescente
+-------------------- ORDER BY 
+-- ordena os resultados por alguma coluna em ordem crescente ou decrescente
 SELECT FirstName, LastName
 FROM person.Person
 ORDER BY FirstName asc, LastName asc  -- asc traz em ordem alfabetica de a - z
@@ -105,12 +103,14 @@ SELECT TOP 4 ProductID, Name, ProductNumber
 FROM Production.Product
 ORDER BY ProductID asc
 
--- BETWEEN - usado para encontrar valor entre um valor minimo e maximo
+-------------------------- BETWEEN 
+-- usado para encontrar valor entre um valor minimo e maximo
 SELECT *
 FROM Production.Product
 WHERE ListPrice between 1000 and 1500 
 
--- NOT BETWEEN lista os valores que não estão entre os valores declarados. ex: não estão entre 1000 e 1500
+---------------------- NOT BETWEEN 
+--lista os valores que não estão entre os valores declarados. ex: não estão entre 1000 e 1500
 SELECT *
 FROM Production.Product
 WHERE ListPrice NOT between 1000 and 1500 
@@ -122,7 +122,8 @@ WHERE HireDate between '2009/01/01' and '2009/12/31'
 ORDER BY HireDate asc
 
 
--- IN - usamos junto com o Where p verificar se um valor corresponde com qualquer valor passado na lista de valores. 
+---------------------- IN 
+-- usamos junto com o Where p verificar se um valor corresponde com qualquer valor passado na lista de valores. 
 -- ele faz uma busca no bd e sempre que encontrar o valor que esta dentro dos ('valor1','valor2') ele retorna na lista.
 -- pode receber uma subconsulta dentro. ex:  valor in (SELECT valor FROM nomeDaTabela)
 
@@ -137,12 +138,14 @@ WHERE BusinessEntityID = 2
 OR BusinessEntityID = 7
 OR BusinessEntityID = 13
 
--- NOT IN - retorna tudo que não estiver dentro desta condição
+------------------------ NOT IN 
+-- retorna tudo que não estiver dentro desta condição
 SELECT *
 FROM Person.Person
 WHERE BusinessEntityID NOT IN (2,7,13)
 
--- LIKE - encontra valores parecidos. EX: para encontrar um nome que tem "ovi"
+--------------------- LIKE 
+-- encontra valores parecidos. EX: para encontrar um nome que tem "ovi"
 -- a posição do % indica o local onde ele deve buscar, neste caso ele considerará qualquer valor que está depois do ovi.
 -- sendo assim, indico que deve obrigatoriamente iniciar com ovi
 -- posso utilizar %ovi% para ele considerar antes e depois %ovi quando sei que ovi está no final
@@ -186,7 +189,7 @@ FROM Production.Product
 WHERE Name LIKE '%road%'
 
 
--- MIN MAX SUM AVG
+------------------ MIN MAX SUM AVG
 -- funções de agregação basicamente agregam ou combinam dados de uma tabela em 1 só resultado
 
 -- AS define um apelido para a tabela, sem o as o resultado exibe Nenhum nome de coluna com o AS exibe 'Soma' como declarado
@@ -208,8 +211,9 @@ SELECT AVG(linetotal) AS 'ValorMedio'
 FROM Sales.SalesOrderDetail
 
 
--- GROUP BY 
--- divide o resultado da pesquisa em grupos. 
+------------------ GROUP BY 
+-- divide o resultado da pesquisa em grupos.
+-- qdo usar AVG, MAX, MIN e SUM com 2 tabelas precisa usar o Group BY 
 --Para cada grupo posso aplicar uma função de agregação. sintaxe:
 SELECT coluna1, funcaoAgregacao(coluna2)
 FROM nomeTabela
@@ -277,7 +281,7 @@ SELECT ProductID,
 FROM Production.WorkOrder
 GROUP BY ProductID
 
--- HAVING
+---------------------- HAVING
 -- junção com o GROUP BY para filtrar resultados de um agrupamento. Um tipo de Where (condição) para dados agrupados.
 --sintaxe
 SELECT coluna1, FuncaoAgregacao(coluna2)
@@ -319,7 +323,7 @@ FROM Sales.SalesOrderDetail
 GROUP BY ProductID
 HAVING AVG(LineTotal) > 1.000000
 
--- AS 
+---------------------- AS 
 -- Renomear as colunas, dar um apelido.
 -- quando uso apenas uma palavra não precisa de AS, ex. Preco.
 -- Para duas ou mais palavras precisa de '', ex. 'Preco do Produto'
@@ -332,7 +336,7 @@ FROM Production.Product
 SELECT UnitPrice AS 'Preço Unitário'
 FROM Sales.SalesOrderDetail
 
--- INNER JOIN
+------------------- INNER JOIN
 
 --juntando todos os dados de duas tabelas
 SELECT *
@@ -370,3 +374,55 @@ FROM Person.StateProvince AS PS
 INNER JOIN Person.Address AS PA
 ON PS.StateProvinceID = PA.StateProvinceID
 
+--------------------- LEFT e INNER JOIN
+-- quais pessoas tem cartão de crédito registrado
+--usando INNER
+SELECT *
+FROM Person.Person AS PP
+INNER JOIN Sales.PersonCreditCard AS PC
+ON PP.BusinessEntityID = PC.BusinessEntityID
+-- retorna 19118 linhas
+
+-- usando LEFT
+SELECT *
+FROM Person.Person AS PP
+LEFT JOIN Sales.PersonCreditCard AS PC
+ON PP.BusinessEntityID = PC.BusinessEntityID
+-- retorna 19972 linhas pq considera as pessoas que não tem cartão de credito registrado. Inclui todas as pessoas da tabela pp
+SELECT 19972 - 19118 -- para verificar quantas linhas de diferença entre LEFT e INNER = 854
+
+-- para selecionar somente estas pessoas que estão sem cartão de credito
+SELECT *
+FROM Person.Person PP
+LEFT JOIN Sales.PersonCreditCard PC
+ON PP.BusinessEntityID = PC.BusinessEntityID
+WHERE PC.CreditCardID IS NULL
+-- retorna 854 linhas
+
+---------------------- UNION 
+-- combina dois ou mais resultados de um select.
+-- sintaxe
+SELECT coluna1, coluna2 -- precisa selecionar a mesma quantidade de coluna e o mesmo tipo de dado
+FROM tabela1 -- posso trabalhar com a mesma tabela ou outra tabela
+UNION -- remove os dados duplicados. Para pegar os duplicados uso UNION ALL
+SELECT coluna1, coluna2 -- precisa selecionar a mesma quantidade de coluna e o mesmo tipo de dado
+FROM tabela2 ou tabela1 -- uso a mesma tabela1 ou outra
+-- Pode ser utilizado em tabelas não normalizadas
+
+--Exemplo1
+SELECT ProductID, Name, ProductNumber
+FROM Production.Product
+WHERE Name LIKE '%Chain%'
+UNION
+SELECT ProductID, Name, ProductNumber
+FROM Production.Product
+WHERE Name LIKE '%Decal%'
+
+--Exemplo2
+SELECT FirstName, MiddleName, Title -- este select sozinho retorna 577 linhas
+FROM Person.Person
+WHERE Title = 'Mr.' 
+UNION -- Unindo os 2 selects retorna 936 linhas
+SELECT FirstName, MiddleName, Title -- este select sozinho retorna 1319 linhas
+FROM Person.Person
+WHERE MiddleName = 'A'
