@@ -510,5 +510,28 @@ FROM Sales.SalesOrderDetail
 SELECT SQRT(LineTotal)
 FROM Sales.SalesOrderDetail
 
----------------------- SUBQUERY
--- subselect
+----------------------- SUBQUERY Subselect
+-- selects dinâmicos
+-- monte um relatório com todos os produtos que tenha preço de venda acima da média
+SELECT *
+FROM Production.Product
+WHERE ListPrice > (SELECT AVG(ListPrice) 
+					FROM Production.Product)
+-- este select é dinâmico, diferente de fazer 2 selects, sendo 1 para achar a média e outro para listar os produtos.
+
+-- nome dos funcionários que tem nome de designer enginner
+-- com subselect
+SELECT FirstName, LastName
+FROM Person.Person
+WHERE BusinessEntityID 
+IN (
+SELECT BusinessEntityID
+FROM HumanResources.Employee
+WHERE JobTitle = 'Design Engineer')
+
+-- com JOIN
+SELECT P.FirstName
+FROM Person.Person P
+JOIN HumanResources.Employee E 
+ON P.BusinessEntityID = E.BusinessEntityID
+AND E.JobTitle = 'Design Engineer'
